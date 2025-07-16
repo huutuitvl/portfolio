@@ -36,14 +36,16 @@ chown -R www-data:www-data storage bootstrap/cache
 php artisan module:make Profile
 
 ### Command create modules
-mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests}
+mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources}
 
 php artisan make:migration create_profiles_table
 
 composer dump-autoload
 
-mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests}
+mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources}
 
 php artisan make:seeder UserSeeder
 
 php artisan db:seed
+
+php artisan migrate:fresh --seed

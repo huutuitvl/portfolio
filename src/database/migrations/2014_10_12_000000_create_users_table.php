@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->enum('role', ['admin', 'editor'])->default('editor');
+            $table->enum('role', ['admin', 'editor'])->default('editor'); // 1: Admin, 2: Editor
+            $table->string('avatar')->nullable(); // Optional avatar field
             $table->string('password');
 
             $table->unsignedBigInteger('created_by')->nullable();

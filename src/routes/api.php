@@ -26,4 +26,12 @@ Route::prefix('auth')->group(function () {
     });
 });
 
-Route::get('/profile', [ProfileController::class, 'show']);
+Route::middleware('auth:api')->prefix('cms/profile')->group(function () {
+    Route::get('/', [ProfileController::class, 'index']);
+    Route::post('/', [ProfileController::class, 'store']);
+    Route::get('{id}', [ProfileController::class, 'show']);
+    Route::put('{id}', [ProfileController::class, 'update']);
+    Route::delete('{id}', [ProfileController::class, 'destroy']);
+});
+
+Route::get('/profile', [ProfileController::class, 'showPublic']);
