@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UserSeeder::class,
             ProfileSeeder::class,
+            EducationSeeder::class,
             // Add other seeders here as needed
         ]);
     }
