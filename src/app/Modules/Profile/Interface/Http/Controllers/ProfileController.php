@@ -40,6 +40,7 @@ class ProfileController extends Controller
     public function store(StoreProfileRequest $request)
     {
         $profile = $this->service->create($request->validated());
+
         return ApiResponse::success(new ProfileResource($profile));
     }
 

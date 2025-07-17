@@ -11,7 +11,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function authorizeAdmin()
+    public function authorizeAdmin(): void
     {
         if (!AuthHelper::isAdmin()) {
             abort(response()->json([
@@ -22,7 +22,7 @@ class Controller extends BaseController
         }
     }
 
-    public function authorizeEditor()
+    public function authorizeEditor(): void
     {
         if (!AuthHelper::isEditor()) {
             abort(response()->json([

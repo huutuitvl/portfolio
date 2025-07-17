@@ -45,6 +45,9 @@ composer dump-autoload
 mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
 
 mkdir -p app/Modules/Education/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Experience/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
 
 php artisan make:seeder UserSeeder
 

@@ -11,7 +11,6 @@ use App\Modules\Education\Interface\Http\Resources\EducationResource;
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use Illuminate\Http\JsonResponse;
-
 class EducationController extends Controller
 {
     protected EducationService $service;

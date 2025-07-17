@@ -47,7 +47,7 @@ class Handler extends ExceptionHandler
             if ($exception instanceof ApiException) {
                 return ApiResponse::error($exception->getMessage(), $exception->getStatusCode());
             }
-            
+
             // API exception handling
             if ($exception instanceof ValidationException) {
                 return ApiResponse::error(
