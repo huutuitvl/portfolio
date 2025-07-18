@@ -36,19 +36,8 @@ chown -R www-data:www-data storage bootstrap/cache
 php artisan module:make Profile
 
 ### Command create modules
-mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-
 php artisan make:migration create_profiles_table
-
 composer dump-autoload
-
-mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-
-mkdir -p app/Modules/Education/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Experience/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-
 php artisan make:seeder UserSeeder
 php artisan db:seed
 php artisan migrate:fresh --seed
@@ -57,9 +46,23 @@ php artisan db:seed --class=EducationSeeder
 docker-compose down
 docker-compose build app
 docker-compose up -d
-
 php -i | grep memory_limit
-
 docker restart nginx
-
 php artisan system:reset-cache
+
+
+mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Education/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Experience/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Blog/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/Skill/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+
+php artisan make:migration create_blogs_table
+php artisan db:seed --class=BlogSeeder
+php artisan db:seed --class=ExperienceSeeder
+
+php artisan migrate --path=src/database/migrations/2025_07_15_163747_create_experiences_table.php
+php artisan migrate:rollback  --path=src/database/migrations/2025_07_15_163747_create_experiences_table.php --step=1

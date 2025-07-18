@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('experiences', function (Blueprint $table) {
+        Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->string('company_name');
-            $table->string('position');
-            $table->text('description')->nullable();
-            $table->string('location')->nullable();
-            $table->date('start_date');
-            $table->date('end_date')->nullable();
-            $table->boolean('is_current')->default(false);
-            $table->integer('order')->default(0);
+            $table->string('title');
+            $table->string('slug')->unique();
+            $table->text('content');
+            $table->enum('status', ['draft', 'published'])->default('draft');
+            $table->string('thumbnail')->nullable();
+            $table->timestamp('published_at')->nullable();
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -36,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('experiences');
+        Schema::dropIfExists('blogs');
     }
 };

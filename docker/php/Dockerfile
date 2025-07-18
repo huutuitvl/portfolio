@@ -22,3 +22,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
+
+ENV COMPOSER_PROCESS_TIMEOUT=1200
+
+RUN composer install --no-interaction --prefer-dist

@@ -12,13 +12,12 @@ class Skill extends BaseModel
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'full_name',
-        'title',
-        'summary',
-        'avatar',
-        'email',
-        'phone',
-        'website',
-        'location',
+        'name',
+        'level',
+        'icon',
+        'order',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 }

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 use App\Modules\Profile\Interface\Http\Controllers\ProfileController;
 use App\Modules\User\Interface\Http\Controllers\AuthController;
+use App\Modules\Blog\Interface\Http\Controllers\BlogController;
+use App\Modules\Experience\Interface\Http\Controllers\ExperienceController;
+use App\Modules\Skill\Interface\Http\Controllers\SkillController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +45,32 @@ Route::prefix('cms/education')->middleware(['auth:api'])->group(function () {
     Route::get('{id}', [EducationController::class, 'show']);
     Route::put('{id}', [EducationController::class, 'update']);
     Route::delete('{id}', [EducationController::class, 'destroy']);
+});
+
+// ✅ Blog CMS routes (admin middleware)
+Route::prefix('cms/blogs')->middleware('auth:api')->group(function () {
+    Route::get('/', [BlogController::class, 'index']);
+    Route::get('/{id}', [BlogController::class, 'show']);
+    Route::post('/', [BlogController::class, 'store']);
+    Route::put('/{id}', [BlogController::class, 'update']);
+    Route::delete('/{id}', [BlogController::class, 'destroy']);
+});
+
+// ✅ Skill CMS routes (admin middleware)
+Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
+    Route::get('/', [SkillController::class, 'index']);
+    Route::get('/{id}', [SkillController::class, 'show']);
+    Route::post('/', [SkillController::class, 'store']);
+    Route::put('/{id}', [SkillController::class, 'update']);
+    Route::delete('/{id}', [SkillController::class, 'destroy']);
+});
+
+Route::prefix('cms/experiences')->middleware('auth:api')->group(function () {
+    Route::get('/', [ExperienceController::class, 'index']); // ?per_page=20
+    Route::get('/{id}', [ExperienceController::class, 'show']);
+    Route::post('/', [ExperienceController::class, 'store']);
+    Route::put('/{id}', [ExperienceController::class, 'update']);
+    Route::delete('/{id}', [ExperienceController::class, 'destroy']);
 });
 
 // ✅ Public profile
