@@ -3,55 +3,81 @@ namespace App\Modules\Skill\Infrastructure\Repositories;
 
 use App\Modules\Skill\Domain\Entities\Skill;
 
-class SkillRepository
+class SkillRepository implements SkillRepositoryInterface
 {
     /**
-     * Get all skills, ordered by the 'order' field.
+     * Get paginated list of skills
+     *
+     * @param int $perPage
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function all() {
-        return Skill::orderBy('order')->get();
+    public function paginate(int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return Skill::orderBy('order')->paginate($perPage);
     }
 
     /**
-     * Find a skill by id, throw an error if not found.
+     * Find a single Skill by ID
      *
      * @param int $id
      * @return Skill
      */
-    public function find($id) {
+    public function find($id)
+    {
         return Skill::findOrFail($id);
     }
 
     /**
-     * Create a new skill with the provided data.
+     * Create a new Skill record
      *
      * @param array $data
      * @return Skill
      */
-    public function create(array $data) {
+    public function create(array $data): Skill
+    {
         return Skill::create($data);
     }
 
     /**
-     * Update a skill by id with the provided data.
+     * Update an existing Skill record
      *
      * @param int $id
      * @param array $data
-     * @return Skill
+     * @return Skill|null
      */
-    public function update($id, array $data) {
-        $skill = $this->find($id);
-        $skill->update($data);
-        return $skill;
+    public function update(int $id, array $data): bool
+    {
+        $exp = $this->find($id);
+        if (!$exp) {
+            return false;
+        }
+
+        return $exp->update($data);
+    }
+    /**
+     * Soft delete an Skill record
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function findById(int $id): ?Skill
+    {
+        return Skill::find($id);
     }
 
     /**
-     * Delete a skill by id.
+     * Delete an Skill record by ID
      *
      * @param int $id
-     * @return bool|null
+     * @return bool
      */
-    public function delete($id) {
-        return $this->find($id)->delete();
+    public function delete(int $id): bool
+    {
+        $exp = Skill::find($id);
+        if (!$exp) {
+            return false;
+        }
+
+        return $exp->delete();
     }
 }

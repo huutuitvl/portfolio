@@ -28,7 +28,7 @@ class SkillController extends Controller
      */
     public function index(): JsonResponse
     {
-        $skills = $this->service->getAll();
+        $skills = $this->service->paginate();
 
         if ($skills->isEmpty()) {
             return ApiResponse::success([], 204);

@@ -2,8 +2,8 @@
 
 namespace App\Modules\Skill\Providers;
 
-use App\Modules\Blog\Infrastructure\Repositories\BlogRepository;
-use App\Modules\Blog\Infrastructure\Repositories\BlogRepositoryInterface;
+use App\Modules\Skill\Infrastructure\Repositories\SkillRepository;
+use App\Modules\Skill\Infrastructure\Repositories\SkillRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class SkillServiceProvider extends ServiceProvider
@@ -12,8 +12,8 @@ class SkillServiceProvider extends ServiceProvider
     {
         // Bind interface to implementation
         $this->app->bind(
-            BlogRepositoryInterface::class,
-            BlogRepository::class
+            SkillRepositoryInterface::class,
+            SkillRepository::class
         );
     }
 

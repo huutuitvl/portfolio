@@ -63,6 +63,7 @@ mkdir -p app/Modules/Skill/{Domain/Entities,Application/Services,Infrastructure/
 php artisan make:migration create_blogs_table
 php artisan db:seed --class=BlogSeeder
 php artisan db:seed --class=ExperienceSeeder
+php artisan db:seed --class=SkillSeeder
 
 php artisan migrate --path=src/database/migrations/2025_07_15_163747_create_experiences_table.php
 php artisan migrate:rollback  --path=src/database/migrations/2025_07_15_163747_create_experiences_table.php --step=1
