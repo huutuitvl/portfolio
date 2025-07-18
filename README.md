@@ -50,11 +50,8 @@ mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructur
 mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
 
 php artisan make:seeder UserSeeder
-
 php artisan db:seed
-
 php artisan migrate:fresh --seed
-
 php artisan db:seed --class=EducationSeeder
 
 docker-compose down

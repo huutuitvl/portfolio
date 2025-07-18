@@ -8,6 +8,8 @@ use App\Modules\Profile\Application\Services\ProfileService;
 use App\Modules\Profile\Interface\Http\Requests\StoreProfileRequest;
 use App\Modules\Profile\Interface\Http\Requests\UpdateProfileRequest;
 use App\Modules\Profile\Interface\Http\Resources\ProfileResource;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -27,7 +29,7 @@ class ProfileController extends Controller
     /**
      * Get all profiles
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
         $profiles = $this->service->getAll();
 
@@ -35,11 +37,49 @@ class ProfileController extends Controller
     }
 
     /**
+     * Handle image upload and return URL or null
+     */
+    protected function handleImageUpload(Request $request, $oldImage = null)
+    {
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($oldImage) {
+                $this->deleteImageFromUrl($oldImage);
+            }
+
+            return $request->file('image')->store('profiles', 's3');
+        }
+
+        return $oldImage;
+    }
+
+    /**
+     * Delete image from S3 using its URL
+     */
+    protected function deleteImageFromUrl($url)
+    {
+        $disk = Storage::disk('s3');
+        $parsed = parse_url($url);
+
+        if (isset($parsed['path'])) {
+            $key = ltrim($parsed['path'], '/');
+            
+            if ($disk->exists($key)) {
+                $disk->delete($key);
+            }
+        }
+    }
+
+    /**
      * Create a new profile (Admin only)
      */
-    public function store(StoreProfileRequest $request)
+    public function store(StoreProfileRequest $request): \Illuminate\Http\JsonResponse
     {
-        $profile = $this->service->create($request->validated());
+        $data = $request->validated();
+
+        $data['image'] = $this->handleImageUpload($request);
+
+        $profile = $this->service->create($data);
 
         return ApiResponse::success(new ProfileResource($profile));
     }
@@ -47,7 +87,7 @@ class ProfileController extends Controller
     /**
      * Get single profile by ID
      */
-    public function show($id)
+    public function show($id): \Illuminate\Http\JsonResponse
     {
         $profile = $this->service->getById($id);
 
@@ -69,7 +109,11 @@ class ProfileController extends Controller
             return ApiResponse::error('Profile not found', 404);
         }
 
-        $updated = $this->service->update($profile, $request->validated());
+        $data = $request->validated();
+
+        $data['image'] = $this->handleImageUpload($request, $profile->image ?? null);
+
+        $updated = $this->service->update($profile, $data);
 
         return ApiResponse::success(new ProfileResource($updated));
     }
@@ -83,6 +127,11 @@ class ProfileController extends Controller
 
         if (!$profile) {
             return ApiResponse::error('Profile not found', 404);
+        }
+
+        // Delete image from S3 if exists
+        if ($profile->image) {
+            $this->deleteImageFromUrl($profile->image);
         }
 
         $this->service->delete($profile);
