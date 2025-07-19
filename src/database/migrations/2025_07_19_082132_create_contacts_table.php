@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            
             $table->string('name');
             $table->string('email');
+            $table->string('subject')->nullable();
             $table->text('message');
-            $table->enum('status', ['unread', 'read', 'archived'])->default('unread');
+
+            $table->string('status')->default('pending'); // pending, resolved...
 
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
@@ -26,7 +27,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
     }
 
     /**

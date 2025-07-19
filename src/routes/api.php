@@ -8,6 +8,8 @@ use App\Modules\User\Interface\Http\Controllers\AuthController;
 use App\Modules\Blog\Interface\Http\Controllers\BlogController;
 use App\Modules\Experience\Interface\Http\Controllers\ExperienceController;
 use App\Modules\Skill\Interface\Http\Controllers\SkillController;
+use App\Modules\Certificate\Interface\Http\Controllers\CertificateController;
+use App\Modules\Contact\Interface\Http\Controllers\ContactController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,13 +67,32 @@ Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [SkillController::class, 'destroy']);
 });
 
+// ✅ Experience CMS routes (admin middleware)
 Route::prefix('cms/experiences')->middleware('auth:api')->group(function () {
-    Route::get('/', [ExperienceController::class, 'index']); // ?per_page=20
+    Route::get('/', [ExperienceController::class, 'index']);
     Route::get('/{id}', [ExperienceController::class, 'show']);
     Route::post('/', [ExperienceController::class, 'store']);
     Route::put('/{id}', [ExperienceController::class, 'update']);
     Route::delete('/{id}', [ExperienceController::class, 'destroy']);
 });
 
-// ✅ Public profile
+// ✅ Certificate CMS routes (admin middleware)
+Route::prefix('cms/certificates')->middleware(['auth:api'])->group(function () {
+    Route::get('/', [CertificateController::class, 'index']);
+    Route::post('/', [CertificateController::class, 'store']);
+    Route::get('{id}', [CertificateController::class, 'show']);
+    Route::put('{id}', [CertificateController::class, 'update']);
+    Route::delete('{id}', [CertificateController::class, 'destroy']);
+});
+
+// ✅ Contact CMS routes (admin middleware)
+Route::prefix('cms/contacts')->middleware(['auth:api'])->group(function () {
+    Route::get('/', [ContactController::class, 'index']);
+    Route::post('/', [ContactController::class, 'store']);
+    Route::get('{id}', [ContactController::class, 'show']);
+    Route::put('{id}', [ContactController::class, 'update']);
+    Route::delete('{id}', [ContactController::class, 'destroy']);
+});
+
+// ✅ Public routes
 Route::get('profile', [ProfileController::class, 'showPublic']);

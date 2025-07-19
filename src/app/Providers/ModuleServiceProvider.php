@@ -22,6 +22,7 @@ class ModuleServiceProvider extends ServiceProvider
             'Contact',
             'Project',
             'Experience',
+            'Certificate',
         ];
 
         foreach ($modules as $module) {

@@ -8,6 +8,13 @@ use Illuminate\Support\ServiceProvider;
 
 class SkillServiceProvider extends ServiceProvider
 {
+    /**
+     * Register bindings for Skill module.
+     *
+     * This method binds the Skill repository interface
+     * to its concrete implementation so it can be injected
+     * throughout the application.
+     */
     public function register(): void
     {
         // Bind interface to implementation
@@ -17,8 +24,13 @@ class SkillServiceProvider extends ServiceProvider
         );
     }
 
+
+    /**
+     * Bootstrap any module services.
+     */
     public function boot(): void
     {
-        //
+        // You can place route, migration, or translation loading here later
+        // $this->loadRoutesFrom(base_path('app/Modules/Skill/Interface/Http/routes.php'));
     }
 }
