@@ -98,6 +98,7 @@ Route::prefix('cms/contacts')->middleware(['auth:api'])->group(function () {
 Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
     Route::post('import', [SkillController::class, 'import']);
     Route::get('export', [SkillController::class, 'export']);
+    Route::get('export-excel', [SkillController::class, 'exportExcel']);
 });
 
 // ✅ Public routes
