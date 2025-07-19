@@ -17,6 +17,7 @@ use App\Shared\Services\CsvImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Modules\Skill\Application\Services\SkillExportService;
 
 class SkillController extends Controller
 {
@@ -171,5 +172,16 @@ class SkillController extends Controller
 
         // Return a standardized JSON response for the import result
         return ResponseHelper::jsonImportResponse('Import completed.', $result);
+    }
+
+    /**
+     * Export skills to an Excel file.
+     *
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function exportExcel(Request $request)
+    {
+        return app(SkillExportService::class)->export($request->only(['name', 'level']));
     }
 }
