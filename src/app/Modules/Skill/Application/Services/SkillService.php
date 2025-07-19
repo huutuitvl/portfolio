@@ -5,8 +5,8 @@ namespace App\Modules\Skill\Application\Services;
 use App\Modules\Skill\Infrastructure\Repositories\SkillRepositoryInterface;
 use App\Shared\Base\BaseService;
 use App\Modules\Skill\Domain\Entities\Skill;
+use App\Modules\Skill\Infrastructure\Http\Requests\SkillExportRequest;
 use App\Shared\Services\CsvExport;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SkillService extends BaseService
@@ -85,10 +85,10 @@ class SkillService extends BaseService
     /**
      * Export filtered skills to CSV with selected columns.
      *
-     * @param Request $request
+     * @param SkillExportRequest $request
      * @return StreamedResponse
      */
-    public function exportToCsv(Request $request): StreamedResponse
+    public function exportToCsv(SkillExportRequest $request): StreamedResponse
     {
         $query = Skill::query();
 

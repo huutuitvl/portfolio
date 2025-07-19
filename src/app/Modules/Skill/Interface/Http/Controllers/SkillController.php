@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Modules\Skill\Application\Services\SkillService;
 use App\Modules\Skill\Interface\Http\Requests\SkillRequest;
 use App\Modules\Skill\Interface\Http\Resources\SkillResource;
+
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Modules\Skill\Domain\Entities\Skill;
+use App\Modules\Skill\Infrastructure\Http\Requests\SkillExportRequest;
 use App\Shared\Helpers\ResponseHelper;
 use App\Shared\Services\CsvImport;
 
@@ -117,10 +119,10 @@ class SkillController extends Controller
      * This function retrieves skill records with optional filters (e.g., name, level),
      * allows selecting which columns to export, and supports pagination (limit & offset).
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  SkillExportRequest $request
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function export(Request $request)
+    public function export(SkillExportRequest $request)
     {
         return $this->service->exportToCsv($request);
     }
