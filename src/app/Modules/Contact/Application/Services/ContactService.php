@@ -3,10 +3,11 @@
 namespace App\Modules\Contact\Application\Services;
 
 use App\Modules\Contact\Infrastructure\Repositories\ContactRepositoryInterface;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use App\Modules\Contact\Domain\Entities\Contact;
+use App\Shared\Base\BaseService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class ContactService
+class ContactService extends BaseService
 {
     protected ContactRepositoryInterface $contactRepository;
 
@@ -23,8 +24,8 @@ class ContactService
     /**
      * Get a paginated list of contact records.
      *
-     * @param int $perPage
-     * @return LengthAwarePaginator
+     * @param int $perPage Number of records per page.
+     * @return LengthAwarePaginator Paginated list of contacts.
      */
     public function paginate(int $perPage = 10): LengthAwarePaginator
     {
@@ -32,13 +33,15 @@ class ContactService
     }
 
     /**
-     * Store a new contact record.
+     * Store a new contact record with transaction handling.
      *
-     * @param array $data
-     * @return Contact
+     * @param array $data Data for the new contact record.
+     * @return Contact Newly created contact entity.
      */
     public function create(array $data): Contact
     {
-        return $this->contactRepository->create($data);
+        return $this->handleTransaction(function () use ($data) {
+            return $this->contactRepository->create($data);
+        });
     }
 }

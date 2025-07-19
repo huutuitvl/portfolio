@@ -3,69 +3,83 @@
 namespace App\Modules\Experience\Application\Services;
 
 use App\Modules\Experience\Infrastructure\Repositories\ExperienceRepositoryInterface;
+use App\Modules\Experience\Domain\Entities\Experience;
+use App\Shared\Base\BaseService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class ExperienceService
+class ExperienceService extends BaseService
 {
-    protected $repo;
+    protected ExperienceRepositoryInterface $repo;
 
+    /**
+     * ExperienceService constructor.
+     *
+     * @param ExperienceRepositoryInterface $repo
+     */
     public function __construct(ExperienceRepositoryInterface $repo)
     {
         $this->repo = $repo;
     }
 
     /**
-     * Get paginated experience list
+     * Get a paginated list of experience records.
      *
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @param int $perPage Number of records per page.
+     * @return LengthAwarePaginator Paginated result.
      */
-    public function paginate($perPage = 10)
+    public function paginate(int $perPage = 10): LengthAwarePaginator
     {
         return $this->repo->paginate($perPage);
     }
 
     /**
-     * Get a single experience by ID
+     * Retrieve a single experience record by ID.
      *
-     * @param int $id
-     * @return \App\Modules\Experience\Domain\Entities\Experience
+     * @param int $id Experience ID.
+     * @return Experience|null
      */
-    public function getById($id)
+    public function getById(int $id): ?Experience
     {
         return $this->repo->findById($id);
     }
 
     /**
-     * Create new experience
+     * Create a new experience record with transaction.
      *
-     * @param array $data
-     * @return \App\Modules\Experience\Domain\Entities\Experience
+     * @param array $data Data for the new experience.
+     * @return Experience
      */
-    public function create($data)
+    public function create(array $data): Experience
     {
-        return $this->repo->create($data);
+        return $this->handleTransaction(function () use ($data) {
+            return $this->repo->create($data);
+        });
     }
 
     /**
-     * Update existing experience
+     * Update an existing experience record with transaction.
      *
-     * @param int $id
-     * @param array $data
-     * @return \App\Modules\Experience\Domain\Entities\Experience
+     * @param int $id Experience ID.
+     * @param array $data Updated data.
+     * @return bool True if update was successful.
      */
-    public function update($id, $data)
+    public function update(int $id, array $data): bool
     {
-        return $this->repo->update($id, $data);
+        return $this->handleTransaction(function () use ($id, $data) {
+            return $this->repo->update($id, $data);
+        });
     }
 
     /**
-     * Delete experience by ID
+     * Soft delete an experience record by ID with transaction.
      *
-     * @param int $id
-     * @return bool|null
+     * @param int $id Experience ID.
+     * @return bool True if deletion was successful.
      */
-    public function delete($id)
+    public function delete(int $id): bool
     {
-        return $this->repo->delete($id);
+        return $this->handleTransaction(function () use ($id) {
+            return $this->repo->delete($id);
+        });
     }
 }

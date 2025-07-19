@@ -4,9 +4,10 @@ namespace App\Modules\Certificate\Application\Services;
 
 use App\Modules\Certificate\Domain\Entities\Certificate;
 use App\Modules\Certificate\Infrastructure\Repositories\CertificateRepositoryInterface;
+use App\Shared\Base\BaseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class CertificateService
+class CertificateService extends BaseService
 {
     protected CertificateRepositoryInterface $repository;
 
@@ -27,14 +28,16 @@ class CertificateService
     }
 
     /**
-     * Create a new certificate record.
+     * Create a new certificate record with transaction.
      *
      * @param array $data Data for the new certificate.
      * @return Certificate The newly created certificate entity.
      */
     public function create(array $data): Certificate
     {
-        return $this->repository->create($data);
+        return $this->handleTransaction(function () use ($data) {
+            return $this->repository->create($data);
+        });
     }
 
     /**
@@ -49,7 +52,7 @@ class CertificateService
     }
 
     /**
-     * Update an existing certificate record.
+     * Update an existing certificate record with transaction.
      *
      * @param int $id The ID of the certificate.
      * @param array $data Updated data.
@@ -57,17 +60,21 @@ class CertificateService
      */
     public function update(int $id, array $data): bool
     {
-        return $this->repository->update($id, $data);
+        return $this->handleTransaction(function () use ($id, $data) {
+            return $this->repository->update($id, $data);
+        });
     }
 
     /**
-     * Soft delete a certificate record.
+     * Soft delete a certificate record with transaction.
      *
      * @param int $id The ID of the certificate to delete.
      * @return bool True if deleted successfully, false otherwise.
      */
     public function delete(int $id): bool
     {
-        return $this->repository->delete($id);
+        return $this->handleTransaction(function () use ($id) {
+            return $this->repository->delete($id);
+        });
     }
 }

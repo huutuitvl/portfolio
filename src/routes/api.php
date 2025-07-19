@@ -95,4 +95,10 @@ Route::prefix('cms/contacts')->middleware(['auth:api'])->group(function () {
 });
 
 // ✅ Public routes
+Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
+    Route::post('import', [SkillController::class, 'import']);
+    Route::get('export', [SkillController::class, 'export']);
+});
+
+// ✅ Public routes
 Route::get('profile', [ProfileController::class, 'showPublic']);

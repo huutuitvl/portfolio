@@ -8,8 +8,13 @@ use App\Modules\Skill\Interface\Http\Requests\SkillRequest;
 use App\Modules\Skill\Interface\Http\Resources\SkillResource;
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
+use App\Modules\Skill\Domain\Entities\Skill;
+use App\Shared\Helpers\ResponseHelper;
+use App\Shared\Services\CsvImport;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SkillController extends Controller
 {
@@ -19,6 +24,7 @@ class SkillController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('can:isAdmin');
+
         $this->service = $service;
     }
 
@@ -103,5 +109,65 @@ class SkillController extends Controller
         }
 
         return ApiResponse::success(['message' => 'Deleted successfully']);
+    }
+
+    /**
+     * Export skill data as a CSV file with dynamic filtering and selected columns.
+     *
+     * This function retrieves skill records with optional filters (e.g., name, level),
+     * allows selecting which columns to export, and supports pagination (limit & offset).
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     */
+    public function export(Request $request)
+    {
+        return $this->service->exportToCsv($request);
+    }
+
+
+    /**
+     * Import skills from a CSV file using batch processing and validation.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'csv' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $result = CsvImport::importCsv(
+            $request->file('csv'),
+            [
+                'Name'  => 'required|string|max:255',   // Skill name
+                'Level' => 'required|string|max:255',   // Skill level
+                'Icon'  => 'required|integer|min:1|max:5', // Icon
+                'Order' => 'nullable|string|max:255',   // Order
+            ],
+            function (array $batch) {
+                $rows = [];
+
+                foreach ($batch as $row) {
+                    $rows[] = [
+                        'name'        => $row['Name'],
+                        'level'       => $row['Level'],
+                        'icon'        => $row['Icon'],
+                        'order'       => $row['Order'],
+                        'created_by'  => Auth::id(),
+                        'created_at'  => now(),
+                        'updated_at'  => now(),
+                    ];
+                }
+
+                // Use bulk insert for better performance
+                Skill::insert($rows);
+            },
+            100 // Batch size
+        );
+
+        // Return a standardized JSON response for the import result
+        return ResponseHelper::jsonImportResponse('Import completed.', $result);
     }
 }

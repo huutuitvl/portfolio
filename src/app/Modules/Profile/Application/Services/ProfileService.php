@@ -3,31 +3,34 @@
 namespace App\Modules\Profile\Application\Services;
 
 use App\Modules\Profile\Domain\Entities\Profile;
+use App\Shared\Base\BaseService;
+use Illuminate\Database\Eloquent\Collection;
 
-class ProfileService
+class ProfileService extends BaseService
 {
     /**
-     * Retrieve the first profile.
+     * Get all profile records.
      *
-     * @return Profile|null
+     * @return Collection
      */
-    public function getAll()
+    public function getAll(): Collection
     {
         return Profile::all();
     }
 
     /**
-     * Retrieve the first profile.
+     * Get a single profile by ID.
      *
+     * @param int $id
      * @return Profile|null
      */
-    public function getById($id): ?Profile
+    public function getById(int $id): ?Profile
     {
         return Profile::find($id);
     }
 
     /**
-     * Retrieve the first profile.
+     * Get the first profile record.
      *
      * @return Profile|null
      */
@@ -37,19 +40,21 @@ class ProfileService
     }
 
     /**
-     * Retrieve the first profile.
+     * Create a new profile with transaction.
      *
-     * @return Profile|null
+     * @param array $data
+     * @return Profile
      */
     public function create(array $data): Profile
     {
-        $data['created_by'] = auth()->id();
-
-        return Profile::create($data);
+        return $this->handleTransaction(function () use ($data) {
+            $data['created_by'] = auth()->id();
+            return Profile::create($data);
+        });
     }
 
     /**
-     * Update an existing profile.
+     * Update an existing profile with transaction.
      *
      * @param Profile $profile
      * @param array $data
@@ -57,21 +62,23 @@ class ProfileService
      */
     public function update(Profile $profile, array $data): Profile
     {
-        $data['updated_by'] = auth()->id();
-
-        $profile->update($data);
-
-        return $profile;
+        return $this->handleTransaction(function () use ($profile, $data) {
+            $data['updated_by'] = auth()->id();
+            $profile->update($data);
+            return $profile;
+        });
     }
 
     /**
-     * Delete a profile.
+     * Soft delete a profile with transaction.
      *
      * @param Profile $profile
      * @return void
      */
     public function delete(Profile $profile): void
     {
-        $profile->delete();
+        $this->handleTransaction(function () use ($profile) {
+            $profile->delete();
+        });
     }
 }
