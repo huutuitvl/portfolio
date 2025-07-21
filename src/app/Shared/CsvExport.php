@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Services;
+namespace App\Shared;
 
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpFoundation\StreamedResponse;

@@ -1,83 +1,46 @@
 <?php
 namespace App\Modules\Skill\Infrastructure\Repositories;
 
+use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\Skill\Domain\Entities\Skill;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-class SkillRepository implements SkillRepositoryInterface
+class SkillRepository extends BaseRepository implements SkillRepositoryInterface
 {
-    /**
-     * Get paginated list of skills
-     *
-     * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
-     */
-    public function paginate(int $perPage = 10): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    protected Model $model;
+
+    public function __construct(Skill $model)
     {
-        return Skill::orderBy('order')->paginate($perPage);
+        parent::__construct($model);
     }
 
     /**
-     * Find a single Skill by ID
-     *
-     * @param int $id
-     * @return Skill
+     * @param $request
+     * @return Builder
      */
-    public function find($id)
+    public function getSkills($request): Builder
     {
-        return Skill::findOrFail($id);
-    }
+        $query = $this->model->newQuery();
 
-    /**
-     * Create a new Skill record
-     *
-     * @param array $data
-     * @return Skill
-     */
-    public function create(array $data): Skill
-    {
-        return Skill::create($data);
-    }
-
-    /**
-     * Update an existing Skill record
-     *
-     * @param int $id
-     * @param array $data
-     * @return Skill|null
-     */
-    public function update(int $id, array $data): bool
-    {
-        $exp = $this->find($id);
-        if (!$exp) {
-            return false;
+        // Apply filters
+        if ($request->filled('name')) {
+            $query->where('name', 'like', '%' . $request->input('name') . '%');
         }
 
-        return $exp->update($data);
-    }
-    /**
-     * Soft delete an Skill record
-     *
-     * @param int $id
-     * @return bool
-     */
-    public function findById(int $id): ?Skill
-    {
-        return Skill::find($id);
-    }
-
-    /**
-     * Delete an Skill record by ID
-     *
-     * @param int $id
-     * @return bool
-     */
-    public function delete(int $id): bool
-    {
-        $exp = Skill::find($id);
-        if (!$exp) {
-            return false;
+        if ($request->filled('level')) {
+            $query->where('level', 'like', '%' . $request->input('level') . '%');
         }
 
-        return $exp->delete();
+        // Apply limit and offset
+        if ($request->filled('limit')) {
+            $query->limit((int)$request->input('limit'));
+        }
+
+        if ($request->filled('offset')) {
+            $query->offset((int)$request->input('offset'));
+        }
+
+        return $query;
     }
 }

@@ -2,62 +2,61 @@
 
 namespace App\Modules\Blog\Application\Services;
 
-use App\Modules\Blog\Domain\Entities\Blog;
 use App\Modules\Blog\Infrastructure\Repositories\BlogRepositoryInterface;
 use App\Shared\Base\BaseService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class BlogService extends BaseService
 {
-    protected BlogRepositoryInterface $repository;
-
     public function __construct(BlogRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * Get paginated list of blog records.
+     * @param array $filters
+     * @param int $page
+     * @param int $perPage
+     * @param callable|null $callback
+     * @return LengthAwarePaginator
      */
-    public function list(int $perPage = 10)
+    public function paginateWithFilter(array $filters = [], int $page = 1, int $perPage = 10, callable $callback = null): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
-    }
+        // Apply filters if any
+        $conditions = [];
 
-    /**
-     * Create new blog record with transaction.
-     */
-    public function create(array $data): Blog
-    {
-        return $this->handleTransaction(function () use ($data) {
-            return $this->repository->create($data);
-        });
-    }
+        if (!empty($filters['title'])) {
+            $conditions[] = [
+                'column' => 'title',
+                'operator' => 'like',
+                'value' => '%' . $filters['title'] . '%',
+            ];
+        }
 
-    /**
-     * Get blog detail by ID.
-     */
-    public function getById(int $id): ?Blog
-    {
-        return $this->repository->findById($id);
-    }
+        if (!empty($filters['slug'])) {
+            $conditions[] = [
+                'column' => 'slug',
+                'operator' => 'like',
+                'value' => '%' . $filters['level'] . '%',
+            ];
+        }
 
-    /**
-     * Update existing blog record with transaction.
-     */
-    public function update(int $id, array $data): bool
-    {
-        return $this->handleTransaction(function () use ($id, $data) {
-            return $this->repository->update($id, $data);
-        });
-    }
+        if (!empty($filters['content'])) {
+            $conditions[] = [
+                'column' => 'content',
+                'operator' => 'like',
+                'value' => '%' . $filters['content'] . '%',
+            ];
+        }
 
-    /**
-     * Delete blog record with transaction.
-     */
-    public function delete(int $id): bool
-    {
-        return $this->handleTransaction(function () use ($id) {
-            return $this->repository->delete($id);
-        });
+        if (isset($filters['status'])) {
+            $conditions[] = [
+                'column' => 'status',
+                'operator' => '=',
+                'value' => $filters['status'],
+            ];
+        }
+
+        return $this->repository->paginateWithFilter($conditions, $page, $perPage, $callback);
     }
 }

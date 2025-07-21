@@ -2,22 +2,23 @@
 
 namespace App\Modules\Skill\Interface\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Modules\Skill\Application\Services\SkillService;
-use App\Modules\Skill\Interface\Http\Requests\SkillRequest;
-use App\Modules\Skill\Interface\Http\Resources\SkillResource;
-
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Modules\Skill\Domain\Entities\Skill;
-use App\Modules\Skill\Infrastructure\Http\Requests\SkillExportRequest;
-use App\Shared\Helpers\ResponseHelper;
-use App\Shared\Services\CsvImport;
+use App\Shared\ResponseHelper;
+use App\Shared\CsvImport;
+use App\Http\Controllers\Controller;
+use App\Modules\Skill\Application\Services\SkillService;
+use App\Modules\Skill\Interface\Http\Requests\SearchSkillRequest;
+use App\Modules\Skill\Interface\Http\Requests\SkillRequest;
+use App\Modules\Skill\Interface\Http\Resources\SkillResource;
+use App\Modules\Skill\Interface\Http\Requests\SkillExportRequest;
+use App\Modules\Skill\Application\Services\SkillExportService;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Modules\Skill\Application\Services\SkillExportService;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SkillController extends Controller
 {
@@ -34,11 +35,12 @@ class SkillController extends Controller
     /**
      * Display a listing of the skills.
      *
+     * @param SearchSkillRequest $request
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(SearchSkillRequest $request): JsonResponse
     {
-        $skills = $this->service->paginate();
+        $skills = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
 
         if ($skills->isEmpty()) {
             return ApiResponse::success([], 204);
@@ -121,9 +123,9 @@ class SkillController extends Controller
      * allows selecting which columns to export, and supports pagination (limit & offset).
      *
      * @param  SkillExportRequest $request
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
-    public function export(SkillExportRequest $request)
+    public function export(SkillExportRequest $request): StreamedResponse
     {
         return $this->service->exportToCsv($request);
     }
@@ -133,9 +135,9 @@ class SkillController extends Controller
      * Import skills from a CSV file using batch processing and validation.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function import(Request $request)
+    public function import(Request $request): JsonResponse
     {
         $request->validate([
             'csv' => 'required|file|mimes:csv,txt',
@@ -178,9 +180,9 @@ class SkillController extends Controller
      * Export skills to an Excel file.
      *
      * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\StreamedResponse
+     * @return StreamedResponse
      */
-    public function exportExcel(Request $request)
+    public function exportExcel(Request $request): StreamedResponse
     {
         return app(SkillExportService::class)->export($request->only(['name', 'level']));
     }

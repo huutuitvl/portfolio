@@ -17,12 +17,22 @@ RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 RUN docker-php-ext-enable opcache
 
 # Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN  curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+    && composer --version
 
 WORKDIR /var/www/html
 
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
 
-ENV COMPOSER_PROCESS_TIMEOUT=1200
 
-RUN composer install --no-interaction --prefer-dist
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html
+
+RUN sed -i 's/^pm = .*/pm = dynamic/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^pm.max_children = .*/pm.max_children = 10/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^pm.start_servers = .*/pm.start_servers = 2/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^pm.min_spare_servers = .*/pm.min_spare_servers = 1/' /usr/local/etc/php-fpm.d/www.conf \
+    && sed -i 's/^pm.max_spare_servers = .*/pm.max_spare_servers = 3/' /usr/local/etc/php-fpm.d/www.conf
+
+# RUN apt-get update && apt-get install -y htop

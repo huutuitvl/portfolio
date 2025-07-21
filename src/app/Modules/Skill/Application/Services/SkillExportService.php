@@ -1,27 +1,29 @@
 <?php
 
-namespace Modules\Skill\Application\Services;
+namespace App\Modules\Skill\Application\Services;
 
 use App\Exports\BaseExport;
-use App\Modules\Skill\Domain\Entities\Skill as EntitiesSkill;
-use Illuminate\Support\Facades\Response;
+use App\Modules\Skill\Infrastructure\Repositories\SkillRepositoryInterface;
+use App\Shared\Base\BaseService;
 use Maatwebsite\Excel\Facades\Excel;
 
-class SkillExportService
+class SkillExportService extends BaseService
 {
-    public function export(array $filters = [])
+    /**
+     * @param SkillRepositoryInterface $repository
+     */
+    public function __construct(SkillRepositoryInterface $repository)
     {
-        $query = EntitiesSkill::query();
+        $this->repository = $repository;
+    }
 
-        // Apply filters
-        if (!empty($filters['name'])) {
-            $query->where('name', 'like', '%' . $filters['name'] . '%');
-        }
-
-        if (!empty($filters['level'])) {
-            $query->where('level', $filters['level']);
-        }
-
+    /**
+     * @param $request
+     * @return mixed
+     */
+    public function exportExcel($request)
+    {
+        $query = $this->repository->getSkills($request);
         $skills = $query->get(['name', 'level', 'icon', 'order']);
 
         // Transform rows

@@ -2,45 +2,26 @@
 
 namespace App\Modules\Blog\Infrastructure\Repositories;
 
-
+use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\Blog\Domain\Entities\Blog;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
-class BlogRepository implements BlogRepositoryInterface
+use Illuminate\Database\Eloquent\Model;
+class BlogRepository extends BaseRepository implements BlogRepositoryInterface
 {
-     public function paginate(int $perPage = 10): LengthAwarePaginator
+    protected Model $model;
+
+    public function __construct(Blog $model)
     {
-        return Blog::orderBy('created_at')->paginate($perPage);
+        parent::__construct($model);
     }
 
-    public function create(array $data): Blog
+    /**
+     * Find a blog record by its slug.
+     *
+     * @param string $slug
+     * @return Blog|null
+     */
+    public function findBySlug(string $slug): ?Blog
     {
-        return Blog::create($data);
+        return $this->model->where('slug', $slug)->first();
     }
-
-    public function findById(int $id): ?Blog
-    {
-        return Blog::find($id);
-    }
-
-    public function update(int $id, array $data): bool
-    {
-        $blog = Blog::find($id);
-        if (!$blog) {
-            return false;
-        }
-
-        return $blog->update($data);
-    }
-
-    public function delete(int $id): bool
-    {
-        $blog = Blog::find($id);
-        if (!$blog) {
-            return false;
-        }
-
-        return $blog->delete();
-    }
-
 }

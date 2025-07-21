@@ -12,6 +12,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Auth\AuthenticationException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Illuminate\Auth\Access\AuthorizationException as ActionAuthorizationException;
 
 
 class Handler extends ExceptionHandler
@@ -67,6 +68,10 @@ class Handler extends ExceptionHandler
                 return ApiResponse::error('Unauthenticated', Response::HTTP_UNAUTHORIZED);
             }
 
+            if ($exception instanceof ActionAuthorizationException) {
+                return ApiResponse::error($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
+            }
+
             // Other exceptions
             $status = Response::HTTP_INTERNAL_SERVER_ERROR; // Default to 500
             if ($exception instanceof HttpExceptionInterface) {
@@ -82,5 +87,4 @@ class Handler extends ExceptionHandler
         // If the request does not expect JSON, use the default exception handler
         return parent::render($request, $exception);
     }
-
 }

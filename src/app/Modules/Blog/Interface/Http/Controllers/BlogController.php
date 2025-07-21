@@ -6,8 +6,10 @@ use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Http\Controllers\Controller;
 use App\Modules\Blog\Application\Services\BlogService;
+use App\Modules\Blog\Interface\Http\Requests\SearchBlogRequest;
 use App\Modules\Blog\Interface\Http\Requests\BlogRequest;
 use App\Modules\Blog\Interface\Http\Resources\BlogResource;
+
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -28,6 +30,7 @@ class BlogController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('can:isAdmin');
+
         $this->service = $service;
     }
 
@@ -36,9 +39,9 @@ class BlogController extends Controller
      *
      * @return JsonResponse JSON response containing paginated blog posts.
      */
-    public function index(): JsonResponse
+    public function index(SearchBlogRequest $request): JsonResponse
     {
-        $blogs = $this->service->list();
+        $blogs = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
 
         if ($blogs->isEmpty()) {
             return ApiResponse::success([], 204);

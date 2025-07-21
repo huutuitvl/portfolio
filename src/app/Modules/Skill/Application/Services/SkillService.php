@@ -4,82 +4,63 @@ namespace App\Modules\Skill\Application\Services;
 
 use App\Modules\Skill\Infrastructure\Repositories\SkillRepositoryInterface;
 use App\Shared\Base\BaseService;
-use App\Modules\Skill\Domain\Entities\Skill;
-use App\Modules\Skill\Infrastructure\Http\Requests\SkillExportRequest;
-use App\Shared\Services\CsvExport;
+use App\Modules\Skill\Interface\Http\Requests\SkillExportRequest;
+use App\Shared\CsvExport;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SkillService extends BaseService
 {
-    protected SkillRepositoryInterface $repo;
-
-    public function __construct(SkillRepositoryInterface $repo)
+    public function __construct(SkillRepositoryInterface $repository)
     {
-        $this->repo = $repo;
+        $this->repository = $repository;
     }
 
     /**
-     * Get paginated list of skills.
-     *
+     * @param array $filters
+     * @param int $page
      * @param int $perPage
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     * @param callable|null $callback
+     * @return LengthAwarePaginator
      */
-    public function paginate(int $perPage = 10)
+    public function paginateWithFilter(array $filters = [], int $page = 1, int $perPage = 10, callable $callback = null): LengthAwarePaginator
     {
-        return $this->repo->paginate($perPage);
-    }
+        // Apply filters if any
+        $conditions = [];
 
-    /**
-     * Get a skill by ID.
-     *
-     * @param int $id
-     * @return Skill|null
-     */
-    public function getById(int $id): ?Skill
-    {
-        return $this->repo->findById($id);
-    }
+        if (!empty($filters['name'])) {
+            $conditions[] = [
+                'column' => 'name',
+                'operator' => 'like',
+                'value' => '%' . $filters['name'] . '%',
+            ];
+        }
 
-    /**
-     * Create a new skill with transaction.
-     *
-     * @param array $data
-     * @return Skill
-     */
-    public function create(array $data): Skill
-    {
-        return $this->handleTransaction(function () use ($data) {
-            $data['created_by'] = auth()->id();
-            return $this->repo->create($data);
-        });
-    }
+        if (!empty($filters['level'])) {
+            $conditions[] = [
+                'column' => 'level',
+                'operator' => 'like',
+                'value' => '%' . $filters['level'] . '%',
+            ];
+        }
 
-    /**
-     * Update an existing skill with transaction.
-     *
-     * @param int $id
-     * @param array $data
-     * @return Skill
-     */
-    public function update(int $id, array $data): Skill
-    {
-        return $this->handleTransaction(function () use ($id, $data) {
-            $data['updated_by'] = auth()->id();
-            return $this->repo->update($id, $data);
-        });
-    }
+        if (!empty($filters['icon'])) {
+            $conditions[] = [
+                'column' => 'icon',
+                'operator' => 'like',
+                'value' => '%' . $filters['icon'] . '%',
+            ];
+        }
 
-    /**
-     * Delete a skill by ID with transaction.
-     *
-     * @param int $id
-     * @return bool|null
-     */
-    public function delete(int $id): ?bool
-    {
-        return $this->handleTransaction(function () use ($id) {
-            return $this->repo->delete($id);
-        });
+        if (isset($filters['order'])) {
+            $conditions[] = [
+                'column' => 'order',
+                'operator' => '=',
+                'value' => $filters['order'],
+            ];
+        }
+
+        return $this->repository->paginateWithFilter($conditions, $page, $perPage, $callback);
     }
 
     /**
@@ -90,25 +71,7 @@ class SkillService extends BaseService
      */
     public function exportToCsv(SkillExportRequest $request): StreamedResponse
     {
-        $query = Skill::query();
-
-        // Apply filters
-        if ($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->input('name') . '%');
-        }
-
-        if ($request->filled('level')) {
-            $query->where('level', 'like', '%' . $request->input('level') . '%');
-        }
-
-        // Apply limit and offset
-        if ($request->filled('limit')) {
-            $query->limit((int)$request->input('limit'));
-        }
-
-        if ($request->filled('offset')) {
-            $query->offset((int)$request->input('offset'));
-        }
+        $query = $this->repository->getSkills($request);
 
         // Determine which columns to export
         $allowedColumns = ['name', 'level', 'icon', 'order'];

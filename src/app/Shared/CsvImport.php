@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Shared\Services;
+namespace App\Shared;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
