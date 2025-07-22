@@ -4,6 +4,8 @@ services:
   app:
     build:
       context: ./docker/php
+    mem_limit: 512m
+    mem_reservation: 256m
     container_name: laravel-app
     working_dir: /var/www/html
     volumes:
