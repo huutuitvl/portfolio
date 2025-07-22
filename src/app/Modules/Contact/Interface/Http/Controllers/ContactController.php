@@ -2,10 +2,13 @@
 
 namespace App\Modules\Contact\Interface\Http\Controllers;
 
+use App\Helpers\ApiResponse;
+use App\Helpers\PaginatorHelper;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use App\Modules\Contact\Application\Services\ContactService;
+use App\Modules\Contact\Interface\Http\Requests\SearchContactRequest;
 use App\Modules\Contact\Interface\Http\Requests\StoreContactRequest;
 use App\Modules\Contact\Interface\Http\Requests\UpdateContactRequest;
 use App\Modules\Contact\Interface\Http\Resources\ContactResource;
@@ -29,10 +32,17 @@ class ContactController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(SearchContactRequest $request): JsonResponse
     {
-        $contacts = $this->contactService->paginate(10);
-        return response()->json(ContactResource::collection($contacts));
+        $contacts = $this->contactService->paginateWithFilter($request->validated(), $request->input('page', 1));
+
+        if ($contacts->isEmpty()) {
+            return ApiResponse::success([], 204);
+        }
+
+        return ApiResponse::success(
+            PaginatorHelper::format($contacts, ContactResource::class)
+        );
     }
 
     /**
@@ -44,7 +54,8 @@ class ContactController extends Controller
     public function store(StoreContactRequest $request): JsonResponse
     {
         $contact = $this->contactService->create($request->validated());
-        return response()->json(new ContactResource($contact), Response::HTTP_CREATED);
+
+        return  ApiResponse::success($contact, Response::HTTP_CREATED);
     }
 
     /**
@@ -55,11 +66,13 @@ class ContactController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $contact = $this->contactService->findById($id);
+        $contact = $this->contactService->getById($id);
+
         if (!$contact) {
-            return response()->json(['message' => 'Contact not found'], Response::HTTP_NOT_FOUND);
+            return ApiResponse::error('Contact not found', 404);
         }
-        return response()->json(new ContactResource($contact));
+
+        return ApiResponse::success($contact);
     }
 
     /**
@@ -71,8 +84,13 @@ class ContactController extends Controller
      */
     public function update(UpdateContactRequest $request, int $id): JsonResponse
     {
-        $contact = $this->contactService->update($id, $request->validated());
-        return response()->json(new ContactResource($contact));
+        $success = $this->contactService->update($id, $request->validated());
+
+        if (!$success) {
+            return ApiResponse::error('Blog not found', 404);
+        }
+
+        return ApiResponse::success(['message' => 'Updated successfully']);
     }
 
     /**
@@ -83,7 +101,12 @@ class ContactController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $this->contactService->delete($id);
-        return response()->json(['message' => 'Contact deleted successfully.']);
+        $success = $this->contactService->delete($id);
+
+        if (!$success) {
+            return ApiResponse::error('Blog not found', 404);
+        }
+
+        return ApiResponse::success(['message' => 'Deleted successfully']);
     }
 }

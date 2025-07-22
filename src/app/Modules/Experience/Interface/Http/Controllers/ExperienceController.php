@@ -12,6 +12,7 @@ use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Modules\Experience\Interface\Http\Requests\SearchExperienceRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 /**
  * Class ExperienceController
@@ -76,7 +77,7 @@ class ExperienceController extends Controller
         $experience = $this->service->getById($id);
 
         if (!$experience) {
-            return ApiResponse::error('Experience not found', 404);
+            return ApiResponse::error('Experience not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success($experience);
@@ -94,7 +95,7 @@ class ExperienceController extends Controller
         $success = $this->service->update($id, $request->validated());
 
         if (!$success) {
-            return ApiResponse::error('Experience not found', 404);
+            return ApiResponse::error('Experience not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success(['message' => 'Updated successfully']);
@@ -111,7 +112,7 @@ class ExperienceController extends Controller
         $success = $this->service->delete($id);
 
         if (!$success) {
-            return ApiResponse::error('Experience not found', 404);
+            return ApiResponse::error('Experience not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success(['message' => 'Deleted successfully']);

@@ -11,6 +11,7 @@ use App\Modules\Certificate\Interface\Http\Requests\StoreCertificateRequest;
 use App\Modules\Certificate\Interface\Http\Requests\UpdateCertificateRequest;
 use App\Modules\Certificate\Interface\Http\Resources\CertificateResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 /**
  * Class CertificateController
@@ -76,7 +77,7 @@ class CertificateController extends Controller
         $certificate = $this->service->getById($id);
 
         if (!$certificate) {
-            return ApiResponse::error('Certificate not found', 404);
+            return ApiResponse::error('Certificate not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success($certificate);
@@ -94,7 +95,7 @@ class CertificateController extends Controller
         $success = $this->service->update($id, $request->validated());
 
         if (!$success) {
-            return ApiResponse::error('Certificate not found', 404);
+            return ApiResponse::error('Certificate not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success(['message' => 'Updated successfully']);

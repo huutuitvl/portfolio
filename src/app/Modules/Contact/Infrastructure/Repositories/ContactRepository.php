@@ -2,51 +2,16 @@
 
 namespace App\Modules\Contact\Infrastructure\Repositories;
 
-use App\Modules\Contact\Domain\Entities\Contact;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Core\Repositories\Contracts\BaseRepositoryInterface;
+use App\Core\Repositories\Eloquent\BaseRepository;
+use Illuminate\Database\Eloquent\Model;
 
-class ContactRepository implements ContactRepositoryInterface
+class ContactRepository  extends BaseRepository implements ContactRepositoryInterface
 {
-    /**
-     * @inheritdoc
-     */
-    public function paginate(int $perPage = 10): LengthAwarePaginator
-    {
-        return Contact::latest()->paginate($perPage);
-    }
+    protected Model $model;
 
-    /**
-     * @inheritdoc
-     */
-    public function create(array $data): Contact
+    public function __construct(ContactRepository $model)
     {
-        return Contact::create($data);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function update(int $id, array $data): Contact
-    {
-        $contact = $this->findById($id);
-        $contact->update($data);
-        return $contact;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function delete(int $id): bool
-    {
-        $contact = $this->findById($id);
-        return $contact->delete();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function findById(int $id): ?Contact
-    {
-        return Contact::find($id);
+        parent::__construct($model);
     }
 }

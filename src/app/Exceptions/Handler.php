@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use App\Helpers\ApiResponse;
 use App\Exceptions\ApiException;
 
+use Illuminate\Support\Facades\Log;
 use Throwable;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
@@ -34,7 +35,8 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {
-            //
+            // Log everything, including 500s
+            Log::error($e);
         });
     }
 

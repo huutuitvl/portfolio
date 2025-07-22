@@ -7,10 +7,8 @@ use App\Modules\Education\Domain\Entities\Education;
 use App\Shared\Base\BaseService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
-class EducationService extends BaseService
+class EducationService extends BaseService 
 {
-    protected EducationRepositoryInterface $repository;
-
     /**
      * EducationService constructor.
      *
@@ -22,64 +20,33 @@ class EducationService extends BaseService
     }
 
     /**
-     * Get a paginated list of education records.
-     *
-     * @param int $perPage Number of records per page.
-     * @return LengthAwarePaginator Paginated list of education records.
+     * @param array $filters
+     * @param int $page
+     * @param int $perPage
+     * @param callable|null $callback
+     * @return LengthAwarePaginator
      */
-    public function list(int $perPage = 10): LengthAwarePaginator
+    public function paginateWithFilter(array $filters = [], int $page = 1, int $perPage = 10, callable $callback = null): LengthAwarePaginator
     {
-        return $this->repository->paginate($perPage);
-    }
+        // Apply filters if any
+        $conditions = [];
 
-    /**
-     * Create a new education record with transaction handling.
-     *
-     * @param array $data Data for the new education.
-     * @return Education The newly created education entity.
-     */
-    public function create(array $data): Education
-    {
-        return $this->handleTransaction(function () use ($data) {
-            return $this->repository->create($data);
-        });
-    }
+        if (!empty($filters['name'])) {
+            $conditions[] = [
+                'column' => 'name',
+                'operator' => 'like',
+                'value' => '%' . $filters['name'] . '%',
+            ];
+        }
 
-    /**
-     * Retrieve a single education record by ID.
-     *
-     * @param int $id The ID of the education record.
-     * @return Education|null The education entity or null if not found.
-     */
-    public function getById(int $id): ?Education
-    {
-        return $this->repository->findById($id);
-    }
+        if (!empty($filters['email'])) {
+            $conditions[] = [
+                'column' => 'email',
+                'operator' => 'like',
+                'value' => '%' . $filters['email'] . '%',
+            ];
+        }
 
-    /**
-     * Update an existing education record with transaction handling.
-     *
-     * @param int $id The ID of the education to update.
-     * @param array $data Updated data for the education record.
-     * @return bool True if update was successful, false otherwise.
-     */
-    public function update(int $id, array $data): bool
-    {
-        return $this->handleTransaction(function () use ($id, $data) {
-            return $this->repository->update($id, $data);
-        });
-    }
-
-    /**
-     * Soft delete an education record with transaction handling.
-     *
-     * @param int $id The ID of the education to delete.
-     * @return bool True if deletion was successful, false otherwise.
-     */
-    public function delete(int $id): bool
-    {
-        return $this->handleTransaction(function () use ($id) {
-            return $this->repository->delete($id);
-        });
+        return $this->repository->paginateWithFilter($conditions, $page, $perPage, $callback);
     }
 }

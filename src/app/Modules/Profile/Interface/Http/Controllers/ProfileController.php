@@ -13,6 +13,7 @@ use App\Modules\Profile\Interface\Http\Resources\ProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ProfileController extends Controller
 {
@@ -104,7 +105,7 @@ class ProfileController extends Controller
         $profile = $this->service->getById($id);
 
         if (!$profile) {
-            return ApiResponse::error('Profile not found', 404);
+            return ApiResponse::error('Profile not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success(new ProfileResource($profile));
@@ -120,7 +121,7 @@ class ProfileController extends Controller
         $profile = $this->service->getById($id);
 
         if (!$profile) {
-            return ApiResponse::error('Profile not found', 404);
+            return ApiResponse::error('Profile not found', Response::HTTP_NOT_FOUND);
         }
 
         $data = $request->validated();
@@ -141,7 +142,7 @@ class ProfileController extends Controller
         $profile = $this->service->getById($id);
 
         if (!$profile) {
-            return ApiResponse::error('Profile not found', 404);
+            return ApiResponse::error('Profile not found', Response::HTTP_NOT_FOUND);
         }
 
         // Delete image from S3 if exists
@@ -163,7 +164,7 @@ class ProfileController extends Controller
         $profile = $this->service->getFirst();
 
         if (!$profile) {
-            return ApiResponse::error('Profile not found', 404);
+            return ApiResponse::error('Profile not found', Response::HTTP_NOT_FOUND);
         }
 
         return ApiResponse::success(new ProfileResource($profile));

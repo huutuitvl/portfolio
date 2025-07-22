@@ -33,7 +33,7 @@ class ResetSystemCache extends Command
         $this->call('cache:clear');
         $this->call('clear-compiled');
         $this->call('optimize:clear');
-        $this->call('opcache:clear');
+        // $this->call('opcache:clear');
 
         $this->info('Laravel cache cleared.');
 
