@@ -6,6 +6,7 @@ use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Http\Controllers\Controller;
 use App\Modules\Certificate\Application\Services\CertificateService;
+use App\Modules\Certificate\Interface\Http\Requests\SearchCertificateRequest;
 use App\Modules\Certificate\Interface\Http\Requests\StoreCertificateRequest;
 use App\Modules\Certificate\Interface\Http\Requests\UpdateCertificateRequest;
 use App\Modules\Certificate\Interface\Http\Resources\CertificateResource;
@@ -38,16 +39,16 @@ class CertificateController extends Controller
      *
      * @return JsonResponse JSON response containing paginated certificates.
      */
-    public function index(): JsonResponse
+    public function index(SearchCertificateRequest $request): JsonResponse
     {
-        $certificates = $this->service->paginate();
+        $certificate = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
 
-        if ($certificates->isEmpty()) {
+        if ($certificate->isEmpty()) {
             return ApiResponse::success([], 204);
         }
 
         return ApiResponse::success(
-            PaginatorHelper::format($certificates, CertificateResource::class)
+            PaginatorHelper::format($certificate, CertificateResource::class)
         );
     }
 
@@ -72,7 +73,7 @@ class CertificateController extends Controller
      */
     public function show(int $id): JsonResponse
     {
-        $certificate = $this->service->findById($id);
+        $certificate = $this->service->getById($id);
 
         if (!$certificate) {
             return ApiResponse::error('Certificate not found', 404);

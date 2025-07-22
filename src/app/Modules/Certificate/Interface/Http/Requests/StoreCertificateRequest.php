@@ -25,10 +25,11 @@ class StoreCertificateRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'organization' => 'nullable|string|max:255',
+            'issuer' => 'nullable|string|max:255',
             'issued_date' => 'required|date',
-            'expired_date' => 'nullable|date|after_or_equal:issued_date',
-            'description' => 'nullable|string|max:1000',
+            'expired_date' => 'required|date|after_or_equal:issued_date',
+            'credential_id' => 'required|string|max:1000',
+            'description' => 'required|string',
         ];
     }
 }

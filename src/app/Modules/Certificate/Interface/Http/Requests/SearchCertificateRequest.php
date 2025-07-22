@@ -4,7 +4,7 @@ namespace App\Modules\Certificate\Interface\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCertificateRequest extends FormRequest
+class SearchCertificateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,9 @@ class UpdateCertificateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'issuer' => 'nullable|string|max:255',
-            'issued_date' => 'required|date',
-            'expired_date' => 'required|date|after_or_equal:issued_date',
-            'credential_id' => 'required|string|max:1000',
-            'description' => 'required|string',
+            'credential_id' => 'nullable|string|max:1000'
         ];
     }
 }
