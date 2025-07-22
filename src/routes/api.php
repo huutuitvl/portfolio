@@ -22,14 +22,14 @@ use App\Modules\Contact\Interface\Http\Controllers\ContactController;
 |
 */
 
-// ✅ Auth routes
+// Auth routes
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::get('me', [AuthController::class, 'me']);
 });
 
-// ✅ CMS routes (auth middleware)
+// CMS routes
 Route::prefix('cms')->middleware('auth:api')->group(function () {
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'index']);
@@ -40,7 +40,7 @@ Route::prefix('cms')->middleware('auth:api')->group(function () {
     });
 });
 
-// ✅ Education CMS routes (admin middleware)
+// Education CMS routes
 Route::prefix('cms/education')->middleware(['auth:api'])->group(function () {
     Route::get('/', [EducationController::class, 'index']);
     Route::post('/', [EducationController::class, 'store']);
@@ -49,7 +49,7 @@ Route::prefix('cms/education')->middleware(['auth:api'])->group(function () {
     Route::delete('{id}', [EducationController::class, 'destroy']);
 });
 
-// ✅ Blog CMS routes (admin middleware)
+// Blog CMS routes
 Route::prefix('cms/blogs')->middleware('auth:api')->group(function () {
     Route::get('/', [BlogController::class, 'index']);
     Route::get('/{id}', [BlogController::class, 'show']);
@@ -58,16 +58,19 @@ Route::prefix('cms/blogs')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [BlogController::class, 'destroy']);
 });
 
-// ✅ Skill CMS routes (admin middleware)
+// Skill CMS routes
 Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
     Route::get('/', [SkillController::class, 'index']);
     Route::get('/{id}', [SkillController::class, 'show']);
     Route::post('/', [SkillController::class, 'store']);
     Route::put('/{id}', [SkillController::class, 'update']);
     Route::delete('/{id}', [SkillController::class, 'destroy']);
+    Route::post('import', [SkillController::class, 'import']);
+    Route::get('export', [SkillController::class, 'export']);
+    Route::get('export-excel', [SkillController::class, 'exportExcel']);
 });
 
-// ✅ Experience CMS routes (admin middleware)
+// Experience CMS routes
 Route::prefix('cms/experiences')->middleware('auth:api')->group(function () {
     Route::get('/', [ExperienceController::class, 'index']);
     Route::get('/{id}', [ExperienceController::class, 'show']);
@@ -76,7 +79,7 @@ Route::prefix('cms/experiences')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [ExperienceController::class, 'destroy']);
 });
 
-// ✅ Certificate CMS routes (admin middleware)
+// Eertificates CMS routes 
 Route::prefix('cms/certificates')->middleware(['auth:api'])->group(function () {
     Route::get('/', [CertificateController::class, 'index']);
     Route::post('/', [CertificateController::class, 'store']);
@@ -85,7 +88,7 @@ Route::prefix('cms/certificates')->middleware(['auth:api'])->group(function () {
     Route::delete('{id}', [CertificateController::class, 'destroy']);
 });
 
-// ✅ Contact CMS routes (admin middleware)
+// Contacts cms/contact
 Route::prefix('cms/contacts')->middleware(['auth:api'])->group(function () {
     Route::get('/', [ContactController::class, 'index']);
     Route::post('/', [ContactController::class, 'store']);
@@ -94,12 +97,6 @@ Route::prefix('cms/contacts')->middleware(['auth:api'])->group(function () {
     Route::delete('{id}', [ContactController::class, 'destroy']);
 });
 
-// ✅ Public routes
-Route::prefix('cms/skills')->middleware('auth:api')->group(function () {
-    Route::post('import', [SkillController::class, 'import']);
-    Route::get('export', [SkillController::class, 'export']);
-    Route::get('export-excel', [SkillController::class, 'exportExcel']);
-});
 
-// ✅ Public routes
+// Public routes
 Route::get('profile', [ProfileController::class, 'showPublic']);

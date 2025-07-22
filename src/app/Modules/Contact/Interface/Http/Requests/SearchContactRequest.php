@@ -19,9 +19,9 @@ class SearchContactRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:191'],
-            'email' => ['required', 'email'],
-            'message' => ['required', 'string'],
+            'name' => ['nullable', 'string', 'max:191'],
+            'email' => ['nullable', 'email'],
+            'message' => ['nullable', 'string'],
         ];
     }
 }
