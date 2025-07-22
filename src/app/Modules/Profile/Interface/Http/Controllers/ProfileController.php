@@ -3,13 +3,16 @@
 namespace App\Modules\Profile\Interface\Http\Controllers;
 
 use App\Helpers\ApiResponse;
+use App\Helpers\PaginatorHelper;
 use App\Http\Controllers\Controller;
 use App\Modules\Profile\Application\Services\ProfileService;
+use App\Modules\Profile\Interface\Http\Requests\SearchProfileRequest;
 use App\Modules\Profile\Interface\Http\Requests\StoreProfileRequest;
 use App\Modules\Profile\Interface\Http\Requests\UpdateProfileRequest;
 use App\Modules\Profile\Interface\Http\Resources\ProfileResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\JsonResponse;
 
 class ProfileController extends Controller
 {
@@ -28,12 +31,21 @@ class ProfileController extends Controller
 
     /**
      * Get all profiles
+     *
+     * @param SearchProfileRequest $request
+     * @return JsonResponse
      */
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index(SearchProfileRequest $request): JsonResponse
     {
-        $profiles = $this->service->getAll();
+        $profiles = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
 
-        return ApiResponse::success(ProfileResource::collection($profiles));
+        if ($profiles->isEmpty()) {
+            return ApiResponse::success([], 204);
+        }
+
+        return ApiResponse::success(
+            PaginatorHelper::format($profiles, ProfileResource::class)
+        );
     }
 
     /**
@@ -63,7 +75,7 @@ class ProfileController extends Controller
 
         if (isset($parsed['path'])) {
             $key = ltrim($parsed['path'], '/');
-            
+
             if ($disk->exists($key)) {
                 $disk->delete($key);
             }
@@ -73,7 +85,7 @@ class ProfileController extends Controller
     /**
      * Create a new profile (Admin only)
      */
-    public function store(StoreProfileRequest $request): \Illuminate\Http\JsonResponse
+    public function store(StoreProfileRequest $request): jsonResponse
     {
         $data = $request->validated();
 
@@ -87,7 +99,7 @@ class ProfileController extends Controller
     /**
      * Get single profile by ID
      */
-    public function show($id): \Illuminate\Http\JsonResponse
+    public function show($id): JsonResponse
     {
         $profile = $this->service->getById($id);
 
@@ -99,9 +111,11 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update profile by ID (Admin only)
+     * @param UpdateProfileRequest $request
+     * @param $id
+     * @return JsonResponse
      */
-    public function update(UpdateProfileRequest $request, $id)
+    public function update(UpdateProfileRequest $request, $id): JsonResponse
     {
         $profile = $this->service->getById($id);
 
@@ -113,15 +127,16 @@ class ProfileController extends Controller
 
         $data['image'] = $this->handleImageUpload($request, $profile->image ?? null);
 
-        $updated = $this->service->update($profile, $data);
+        $updated = $this->service->update($id, $data);
 
         return ApiResponse::success(new ProfileResource($updated));
     }
 
     /**
-     * Delete profile (Admin only)
+     * @param $id
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         $profile = $this->service->getById($id);
 
@@ -134,15 +149,16 @@ class ProfileController extends Controller
             $this->deleteImageFromUrl($profile->image);
         }
 
-        $this->service->delete($profile);
+        $this->service->delete($id);
 
         return ApiResponse::success(['message' => 'Profile deleted']);
     }
 
+
     /**
-     * Get single profile first (Public access)
+     * @return JsonResponse
      */
-    public function showPublic()
+    public function showPublic(): JsonResponse
     {
         $profile = $this->service->getFirst();
 

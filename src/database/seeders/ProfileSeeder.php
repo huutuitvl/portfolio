@@ -18,10 +18,10 @@ class ProfileSeeder extends Seeder
             'phone' => '0123456789',
             'location' => 'TP.HCM, Việt Nam',
             'birthday' => '1990-01-01',
-            'social_links' => json_encode([
+            'social_links' => [
                 'github' => 'https://github.com/cauchularavel',
                 'linkedin' => 'https://linkedin.com/in/cauchularavel'
-            ], true),
+            ],
             'created_by' => 1,
         ]);
     }

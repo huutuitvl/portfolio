@@ -3,82 +3,61 @@
 namespace App\Modules\Profile\Application\Services;
 
 use App\Modules\Profile\Domain\Entities\Profile;
+use App\Modules\Profile\Infrastructure\Repositories\ProfileRepositoryInterface;
 use App\Shared\Base\BaseService;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ProfileService extends BaseService
 {
-    /**
-     * Get all profile records.
-     *
-     * @return Collection
-     */
-    public function getAll(): Collection
+    public function __construct(ProfileRepositoryInterface $repository)
     {
-        return Profile::all();
+        $this->repository = $repository;
     }
 
     /**
-     * Get a single profile by ID.
-     *
-     * @param int $id
-     * @return Profile|null
+     * @param array $filters
+     * @param int $page
+     * @param int $perPage
+     * @param callable|null $callback
+     * @return LengthAwarePaginator
      */
-    public function getById(int $id): ?Profile
+    public function paginateWithFilter(array $filters = [], int $page = 1, int $perPage = 10, callable $callback = null): LengthAwarePaginator
     {
-        return Profile::find($id);
+        // Apply filters if any
+        $conditions = [];
+
+        if (!empty($filters['full_name'])) {
+            $conditions[] = [
+                'column' => 'full_name',
+                'operator' => 'like',
+                'value' => '%' . $filters['full_name'] . '%',
+            ];
+        }
+
+        if (!empty($filters['email'])) {
+            $conditions[] = [
+                'column' => 'email',
+                'operator' => 'like',
+                'value' => '%' . $filters['email'] . '%',
+            ];
+        }
+
+        if (!empty($filters['phone'])) {
+            $conditions[] = [
+                'column' => 'phone',
+                'operator' => 'like',
+                'value' => '%' . $filters['phone'] . '%',
+            ];
+        }
+
+        return $this->repository->paginateWithFilter($conditions, $page, $perPage, $callback);
     }
 
     /**
-     * Get the first profile record.
-     *
      * @return Profile|null
      */
     public function getFirst(): ?Profile
     {
-        return Profile::first();
-    }
-
-    /**
-     * Create a new profile with transaction.
-     *
-     * @param array $data
-     * @return Profile
-     */
-    public function create(array $data): Profile
-    {
-        return $this->handleTransaction(function () use ($data) {
-            $data['created_by'] = auth()->id();
-            return Profile::create($data);
-        });
-    }
-
-    /**
-     * Update an existing profile with transaction.
-     *
-     * @param Profile $profile
-     * @param array $data
-     * @return Profile
-     */
-    public function update(Profile $profile, array $data): Profile
-    {
-        return $this->handleTransaction(function () use ($profile, $data) {
-            $data['updated_by'] = auth()->id();
-            $profile->update($data);
-            return $profile;
-        });
-    }
-
-    /**
-     * Soft delete a profile with transaction.
-     *
-     * @param Profile $profile
-     * @return void
-     */
-    public function delete(Profile $profile): void
-    {
-        $this->handleTransaction(function () use ($profile) {
-            $profile->delete();
-        });
+        return $this->repository->getFirst();
     }
 }
