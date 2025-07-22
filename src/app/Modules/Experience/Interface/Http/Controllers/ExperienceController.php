@@ -10,6 +10,7 @@ use App\Modules\Experience\Interface\Http\Resources\ExperienceResource;
 
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
+use App\Modules\Experience\Interface\Http\Requests\SearchExperienceRequest;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -39,10 +40,9 @@ class ExperienceController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(SearchExperienceRequest $request): JsonResponse
     {
-        $experiences = $this->service->paginate();
-
+        $experiences = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
         if ($experiences->isEmpty()) {
             return ApiResponse::success([], 204);
         }

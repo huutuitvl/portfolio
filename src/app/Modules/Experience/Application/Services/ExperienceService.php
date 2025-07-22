@@ -9,77 +9,44 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class ExperienceService extends BaseService
 {
-    protected ExperienceRepositoryInterface $repo;
-
     /**
      * ExperienceService constructor.
      *
      * @param ExperienceRepositoryInterface $repo
      */
-    public function __construct(ExperienceRepositoryInterface $repo)
+    public function __construct(ExperienceRepositoryInterface $repository)
     {
-        $this->repo = $repo;
+        $this->repository = $repository;
     }
 
     /**
-     * Get a paginated list of experience records.
-     *
-     * @param int $perPage Number of records per page.
-     * @return LengthAwarePaginator Paginated result.
+     * @param array $filters
+     * @param int $page
+     * @param int $perPage
+     * @param callable|null $callback
+     * @return LengthAwarePaginator
      */
-    public function paginate(int $perPage = 10): LengthAwarePaginator
+    public function paginateWithFilter(array $filters = [], int $page = 1, int $perPage = 10, callable $callback = null): LengthAwarePaginator
     {
-        return $this->repo->paginate($perPage);
-    }
+        // Apply filters if any
+        $conditions = [];
 
-    /**
-     * Retrieve a single experience record by ID.
-     *
-     * @param int $id Experience ID.
-     * @return Experience|null
-     */
-    public function getById(int $id): ?Experience
-    {
-        return $this->repo->findById($id);
-    }
+        if (!empty($filters['company_name'])) {
+            $conditions[] = [
+                'column' => 'company_name',
+                'operator' => 'like',
+                'value' => '%' . $filters['company_name'] . '%',
+            ];
+        }
 
-    /**
-     * Create a new experience record with transaction.
-     *
-     * @param array $data Data for the new experience.
-     * @return Experience
-     */
-    public function create(array $data): Experience
-    {
-        return $this->handleTransaction(function () use ($data) {
-            return $this->repo->create($data);
-        });
-    }
+        if (!empty($filters['position'])) {
+            $conditions[] = [
+                'column' => 'position',
+                'operator' => 'like',
+                'value' => '%' . $filters['position'] . '%',
+            ];
+        }
 
-    /**
-     * Update an existing experience record with transaction.
-     *
-     * @param int $id Experience ID.
-     * @param array $data Updated data.
-     * @return bool True if update was successful.
-     */
-    public function update(int $id, array $data): bool
-    {
-        return $this->handleTransaction(function () use ($id, $data) {
-            return $this->repo->update($id, $data);
-        });
-    }
-
-    /**
-     * Soft delete an experience record by ID with transaction.
-     *
-     * @param int $id Experience ID.
-     * @return bool True if deletion was successful.
-     */
-    public function delete(int $id): bool
-    {
-        return $this->handleTransaction(function () use ($id) {
-            return $this->repo->delete($id);
-        });
+        return $this->repository->paginateWithFilter($conditions, $page, $perPage, $callback);
     }
 }

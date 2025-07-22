@@ -14,15 +14,13 @@ class ExperienceResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'company' => $this->company,
+            'company_name' => $this->company,
             'position' => $this->position,
             'description' => $this->description,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'order' => $this->order,
-
-            'created_at' => $this->created_at?->toDateTimeString(),
-            'updated_at' => $this->updated_at?->toDateTimeString(),
+            'location' => $this->location
         ];
     }
 }

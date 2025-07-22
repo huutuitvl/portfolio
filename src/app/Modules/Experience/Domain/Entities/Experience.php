@@ -13,11 +13,12 @@ class Experience extends BaseModel
     protected $table = 'experiences';
 
     protected $fillable = [
-        'company',
+        'company_name',
         'position',
         'description',
         'start_date',
         'end_date',
+        'position',
         'is_current',
         'order',
         'created_by',
