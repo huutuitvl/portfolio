@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Modules\Education\Application\Services\EducationService;
 use App\Modules\Education\Interface\Http\Requests\StoreEducationRequest;
 use App\Modules\Education\Interface\Http\Requests\UpdateEducationRequest;
+use App\Modules\Education\Interface\Http\Requests\SearchEducationRequest;
 
 use App\Modules\Education\Interface\Http\Resources\EducationResource;
 use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use Illuminate\Http\JsonResponse;
+
 class EducationController extends Controller
 {
     protected EducationService $service;
@@ -33,9 +35,9 @@ class EducationController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(SearchEducationRequest $request): JsonResponse
     {
-        $educations = $this->service->list();
+        $educations = $this->service->paginateWithFilter($request->validated(), $request->input('page', 1));
 
         if ($educations->isEmpty()) {
             return ApiResponse::success([], 204);

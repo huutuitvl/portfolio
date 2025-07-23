@@ -41,7 +41,7 @@ Route::prefix('cms')->middleware('auth:api')->group(function () {
 });
 
 // Education CMS routes
-Route::prefix('cms/education')->middleware(['auth:api'])->group(function () {
+Route::prefix('cms/educations')->middleware(['auth:api'])->group(function () {
     Route::get('/', [EducationController::class, 'index']);
     Route::post('/', [EducationController::class, 'store']);
     Route::get('{id}', [EducationController::class, 'show']);

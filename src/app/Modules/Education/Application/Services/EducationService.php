@@ -31,19 +31,27 @@ class EducationService extends BaseService
         // Apply filters if any
         $conditions = [];
 
-        if (!empty($filters['name'])) {
+        if (!empty($filters['school_name'])) {
             $conditions[] = [
-                'column' => 'name',
+                'column' => 'school_name',
                 'operator' => 'like',
-                'value' => '%' . $filters['name'] . '%',
+                'value' => '%' . $filters['school_name'] . '%',
             ];
         }
 
-        if (!empty($filters['email'])) {
+        if (!empty($filters['major'])) {
             $conditions[] = [
-                'column' => 'email',
+                'column' => 'major',
                 'operator' => 'like',
-                'value' => '%' . $filters['email'] . '%',
+                'value' => '%' . $filters['major'] . '%',
+            ];
+        }
+
+        if (!empty($filters['degree'])) {
+            $conditions[] = [
+                'column' => 'degree',
+                'operator' => 'like',
+                'value' => '%' . $filters['degree'] . '%',
             ];
         }
 
