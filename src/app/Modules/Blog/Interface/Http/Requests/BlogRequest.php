@@ -2,15 +2,15 @@
 
 namespace App\Modules\Blog\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class BlogRequest extends FormRequest
+class BlogRequest extends BaseRequest
 {
     public function rules()
     {
         return [
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:blogs,slug,' . $this->id,
+            'slug' => 'required|string|max:255|unique:blogs,slug,',
             'content' => 'required|string',
             'status' => 'in:draft,published',
             'thumbnail' => 'nullable|string',

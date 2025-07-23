@@ -2,9 +2,9 @@
 
 namespace App\Modules\Experience\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SearchExperienceRequest extends FormRequest
+class SearchExperienceRequest extends BaseRequest
 {
     public function rules(): array
     {

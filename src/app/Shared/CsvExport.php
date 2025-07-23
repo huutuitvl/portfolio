@@ -25,7 +25,7 @@ class CsvExport
         array $headerJp,
         array $headerEn,
         string $fileName,
-        callable $handleFunction,
+        callable $handleFunction = null,
         int $chunkSize = self::LIMIT_RECORD
     ): StreamedResponse {
         return response()->streamDownload(function () use ($builder, $headerJp, $headerEn, $handleFunction, $chunkSize) {

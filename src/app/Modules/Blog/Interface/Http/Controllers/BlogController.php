@@ -6,10 +6,9 @@ use App\Helpers\ApiResponse;
 use App\Helpers\PaginatorHelper;
 use App\Http\Controllers\Controller;
 use App\Modules\Blog\Application\Services\BlogService;
-use App\Modules\Blog\Interface\Http\Requests\SearchBlogRequest;
 use App\Modules\Blog\Interface\Http\Requests\BlogRequest;
+use app\Modules\Blog\Interface\Http\Requests\SearchBlogRequest;
 use App\Modules\Blog\Interface\Http\Resources\BlogResource;
-
 use Illuminate\Http\JsonResponse;
 
 /**

@@ -72,28 +72,22 @@ class SkillService extends BaseService
     public function exportToCsv(SkillExportRequest $request): StreamedResponse
     {
         $query = $this->repository->getSkills($request);
-
-        // Determine which columns to export
-        $allowedColumns = ['name', 'level', 'icon', 'order'];
-        $requestedColumns = $request->input('columns', ['name', 'level']);
-        $columnsToExport = array_values(array_intersect($requestedColumns, $allowedColumns));
-
-        if (empty($columnsToExport)) {
-            abort(422, 'No valid columns selected.');
-        }
+        $query->select([
+            'id',
+            'name',
+            'level',
+            'icon',
+            'order',
+        ]);
 
         // Headers
-        $headers = array_map(fn($col) => ucfirst($col), $columnsToExport);
-
+        $headers =  ['ID', 'name', 'level', 'icon', 'order'];
         // Export
         return CsvExport::downloadCsv(
             $query,
             [],
             $headers,
-            'skills.csv',
-            function ($row) use ($columnsToExport) {
-                return array_map(fn($col) => $row[$col], $columnsToExport);
-            }
+            'skills.csv'
         );
     }
 }

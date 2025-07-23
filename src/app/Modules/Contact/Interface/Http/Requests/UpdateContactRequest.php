@@ -2,9 +2,9 @@
 
 namespace App\Modules\Contact\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class UpdateContactRequest extends FormRequest
+class UpdateContactRequest extends BaseRequest
 {
     public function authorize(): bool
     {

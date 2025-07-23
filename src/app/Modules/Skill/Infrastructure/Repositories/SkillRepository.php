@@ -5,6 +5,7 @@ use App\Core\Repositories\Eloquent\BaseRepository;
 use App\Modules\Skill\Domain\Entities\Skill;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\Skill\Interface\Http\Requests\SkillExportRequest;
 
 class SkillRepository extends BaseRepository implements SkillRepositoryInterface
 {
@@ -19,7 +20,7 @@ class SkillRepository extends BaseRepository implements SkillRepositoryInterface
      * @param $request
      * @return Builder
      */
-    public function getSkills($request): Builder
+    public function getSkills(SkillExportRequest $request): Builder
     {
         $query = $this->model->newQuery();
 

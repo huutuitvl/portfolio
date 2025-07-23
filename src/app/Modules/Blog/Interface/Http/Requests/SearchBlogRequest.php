@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\Blog\Interface\Http\Requests;
+namespace app\Modules\Blog\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SearchBlogRequest extends FormRequest
+class SearchBlogRequest extends BaseRequest
 {
     public function rules(): array
     {

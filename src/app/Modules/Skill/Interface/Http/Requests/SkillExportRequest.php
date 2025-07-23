@@ -2,20 +2,17 @@
 
 namespace App\Modules\Skill\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class SkillExportRequest extends FormRequest
+class SkillExportRequest extends BaseRequest
 {
     public function rules(): array
     {
         return [
-            // Pagination
-            'limit'      => 'sometimes|integer|min:1|max:1000',
-            'offset'     => 'sometimes|integer|min:0',
-
-            // Search Filters (only name and level allowed)
-            'name'       => 'sometimes|string|max:255',
-            'level'      => 'sometimes|string|max:255',
+            'limit'  => 'nullable|integer|min:1|max:1000',
+            'page'   => 'nullable|integer|min:0',
+            'name'   => 'nullable|string|max:255',
+            'level'  => 'nullable|string|max:255',
         ];
     }
 

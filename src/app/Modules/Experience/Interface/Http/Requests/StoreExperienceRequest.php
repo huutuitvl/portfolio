@@ -1,9 +1,9 @@
 <?php
 namespace App\Modules\Experience\Interface\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\BaseRequest;
 
-class StoreExperienceRequest extends FormRequest
+class StoreExperienceRequest extends BaseRequest
 {
     public function rules(): array
     {
