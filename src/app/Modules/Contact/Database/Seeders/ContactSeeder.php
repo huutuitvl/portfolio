@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Contact\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\Contact\Domain\Entities\Contact;

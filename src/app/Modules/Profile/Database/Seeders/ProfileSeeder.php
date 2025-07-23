@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Profile\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\Profile\Domain\Entities\Profile;

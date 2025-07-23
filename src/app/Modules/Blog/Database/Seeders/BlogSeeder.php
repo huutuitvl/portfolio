@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Blog\Database\Seeders;
 
 use App\Modules\Blog\Domain\Entities\Blog;
 use Illuminate\Database\Seeder;
@@ -10,8 +10,7 @@ class BlogSeeder extends Seeder
 {
     public function run(): void
     {
-        Blog::truncate(); // Xóa sạch trước khi seed (tuỳ nhu cầu)
-
+        Blog::truncate();
         $blogs = [
             [
                 'title' => 'Why I Love Laravel',
@@ -33,8 +32,8 @@ class BlogSeeder extends Seeder
 
         foreach ($blogs as $blog) {
             Blog::create($blog + [
-                    'created_by' => 1,
-                    'updated_by' => 1,
+                'created_by' => 1,
+                'updated_by' => 1,
             ]);
         }
     }

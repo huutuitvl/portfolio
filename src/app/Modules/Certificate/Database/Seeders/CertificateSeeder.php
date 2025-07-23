@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Certificate\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\Certificate\Domain\Entities\Certificate;

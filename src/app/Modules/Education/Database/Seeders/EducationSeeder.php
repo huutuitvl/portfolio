@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace  App\Modules\Education\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\Education\Domain\Entities\Education;

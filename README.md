@@ -47,17 +47,16 @@ php -i | grep memory_limit
 docker restart nginx
 php artisan system:reset-cache
 
-mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Education/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Experience/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Blog/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Skill/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-mkdir -p app/Modules/Certificate/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
-
-mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers}
+mkdir -p app/Modules/User/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Education/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Experience/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Project/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Profile/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Blog/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Skill/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Certificate/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
+mkdir -p app/Modules/Contact/{Domain/Entities,Application/Services,Infrastructure/Repositories,Interface/Http/Controllers,Interface/Http/Requests,Interface/Http/Resources,Providers,Database/Migrations,Database/Seeders}
 
 php artisan make:migration create_blogs_table
 php artisan db:seed --class=BlogSeeder

@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\File;
 
 class ModuleServiceProvider extends ServiceProvider
 {
@@ -13,23 +14,18 @@ class ModuleServiceProvider extends ServiceProvider
 
     protected function registerModuleProviders(): void
     {
-        $modules = [
-            'Education',
-            'Profile',
-            'User',
-            'Blog',
-            'Skill',
-            'Contact',
-            'Project',
-            'Experience',
-            'Certificate',
-        ];
+        $modulePath = base_path('app/Modules');
 
-        foreach ($modules as $module) {
-            $providerPath = "App\\Modules\\$module\\Providers\\{$module}ServiceProvider";
+        if (!File::isDirectory($modulePath)) {
+            return;
+        }
 
-            if (class_exists($providerPath)) {
-                $this->app->register($providerPath);
+        foreach (File::directories($modulePath) as $dir) {
+            $module = basename($dir);
+            $providerClass = "App\\Modules\\{$module}\\Providers\\{$module}ServiceProvider";
+
+            if (class_exists($providerClass)) {
+                $this->app->register($providerClass);
             }
         }
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Modules\Experience\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Modules\Experience\Domain\Entities\Experience;
