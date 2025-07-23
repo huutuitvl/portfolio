@@ -87,7 +87,7 @@ class SkillService extends BaseService
             $query,
             [],
             $headers,
-            'skills.csv'
+            CsvExport::generateCsvFilename('skills')
         );
     }
 }

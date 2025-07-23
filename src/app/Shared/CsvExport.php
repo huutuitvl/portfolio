@@ -53,6 +53,18 @@ class CsvExport
             });
 
             fclose($handle);
-        }, $fileName);
+        }, $fileName, ['Content-Type' => 'text/csv']);
+    }
+
+    /**
+     * Generate CSV filename with current timestamp.
+     *
+     * @param string|null $fileName
+     * @return string
+     */
+    public static function generateCsvFilename(string $fileName = 'export'): string
+    {
+        $timestamp = now()->format('Y-m-d_H-i-s'); // avoid ":" in filename
+        return sprintf('%s_%s.csv', $fileName, $timestamp);
     }
 }

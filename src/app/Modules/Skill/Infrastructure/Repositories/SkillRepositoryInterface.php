@@ -8,9 +8,9 @@ use App\Modules\Skill\Interface\Http\Requests\SkillExportRequest;
 
 interface SkillRepositoryInterface extends BaseRepositoryInterface
 {
-    /**
-     * @param $request
-     * @return Builder
-     */
-   public function getSkills(SkillExportRequest $request); 
+  /**
+   * @param $request
+   * @return Builder
+   */
+  public function getSkills(SkillExportRequest $request): Builder;
 }
